@@ -371,7 +371,7 @@ class CameraActivity : AppCompatActivity() {
                 addressText = "$sublocality, $locality"
             }
         } catch (e: IOException) {
-            Log.e("MapsActivity", e.toString())
+            Log.e(TAG, e.toString())
         }
 
         return addressText
