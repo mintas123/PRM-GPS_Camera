@@ -22,7 +22,7 @@ class CameraActivity : AppCompatActivity() {
         fun newInstance() = CameraActivity()
     }
 
-    private lateinit var textureViewX: TextureView
+    private lateinit var myTextureView: TextureView
 
     private val cameraManager by lazy { getSystemService(Context.CAMERA_SERVICE) as CameraManager }
 
@@ -104,16 +104,16 @@ class CameraActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        textureViewX = findViewById(R.id.textureView)
-        textureViewX.surfaceTextureListener = this
+        myTextureView = findViewById(R.id.textureView)
+        myTextureView.surfaceTextureListener = surfaceListener
     }
 
     override fun onResume() {
         super.onResume()
-        if (textureViewX.isAvailable) {
+        if (myTextureView.isAvailable) {
             openCamera()
         } else {
-            textureViewX.surfaceTextureListener = surfaceListener
+            myTextureView.surfaceTextureListener = surfaceListener
         }
 
     }
