@@ -7,45 +7,30 @@
     tools:context=".activities.CameraActivity"
     android:background="@color/colorBackground">
 
-    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/cardview_dark_background"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="GPS TAGGER"
-        android:textSize="42sp"
-        app:layout_constraintBottom_toTopOf="@+id/texture_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
     <pl.pjatk.s16604.project2.utils.AutoFitTextureView
         android:id="@+id/texture_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/TakePicBtn"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_width="563dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_bias="0.357"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/galleryBtn"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_marginEnd="4dp"
         android:background="@drawable/btn_rounded"
         android:padding="10dp"
         android:src="@drawable/gallery_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/TakePicBtn"
-        app:layout_constraintHorizontal_bias="0.27"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.953" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintStart_toEndOf="@+id/texture_view"
+        app:layout_constraintTop_toBottomOf="@+id/TakePicBtn" />
 
     <ImageView
         android:id="@+id/TakePicBtn"
@@ -56,24 +41,24 @@
         android:src="@drawable/camera_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/texture_view"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.974" />
+        app:layout_constraintVertical_bias="0.498" />
 
     <ImageView
         android:id="@+id/changeCameraBtn"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_marginTop="52dp"
         android:background="@drawable/btn_round"
         android:padding="10dp"
         android:src="@drawable/flip_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/TakePicBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.833"
-        app:layout_constraintStart_toEndOf="@+id/TakePicBtn"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toEndOf="@+id/texture_view"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.953" />
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
