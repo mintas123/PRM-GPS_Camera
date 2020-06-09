@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/TakePicBtn"
+        app:layout_constraintBottom_toTopOf="@+id/take_pic_btn"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -34,21 +34,21 @@
         app:layout_constraintVertical_bias="0.8" />
 
     <ImageView
-        android:id="@+id/galleryBtn"
+        android:id="@+id/gallery_btn"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/btn_rounded"
         android:padding="10dp"
         android:src="@drawable/gallery_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/TakePicBtn"
+        app:layout_constraintEnd_toStartOf="@+id/take_pic_btn"
         app:layout_constraintHorizontal_bias="0.27"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.953" />
 
     <ImageView
-        android:id="@+id/TakePicBtn"
+        android:id="@+id/take_pic_btn"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:background="@drawable/btn_round"
@@ -62,7 +62,7 @@
         app:layout_constraintVertical_bias="0.974" />
 
     <ImageView
-        android:id="@+id/changeCameraBtn"
+        android:id="@+id/change_camera_btn"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/btn_round"
@@ -71,7 +71,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.833"
-        app:layout_constraintStart_toEndOf="@+id/TakePicBtn"
+        app:layout_constraintStart_toEndOf="@+id/take_pic_btn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.953" />
 

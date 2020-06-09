@@ -64,9 +64,28 @@ fun getAddress(context: Context,latLng: LatLng): String {
     try {
         addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
         if (addresses != null && addresses.isNotEmpty()) {
-            val sublocality = addresses[0].subLocality
-            val locality= addresses[0].locality
-            addressText = "$sublocality, $locality"
+            val subLocality = addresses[0].subLocality
+            val city= addresses[0].locality
+            val country = addresses[0].countryName
+            val adminArea = addresses[0].adminArea
+
+            if (country != null){
+                if (adminArea != null) {
+                    if (city != null){
+                        if (subLocality != null){
+                            addressText = "$subLocality - $city, $country"
+                        } else{
+                            addressText = "$city, $country"
+                        }
+                    }else{
+                        addressText = "$adminArea, $country"
+                    }
+                }else{
+                    addressText = country
+                }
+            } else {
+                addressText = "Planet Earth"
+            }
         }
     } catch (e: IOException) {
         Log.e(CameraActivity.TAG, e.toString())

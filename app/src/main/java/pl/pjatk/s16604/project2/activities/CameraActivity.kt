@@ -46,7 +46,7 @@ class CameraActivity : AppCompatActivity() {
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
 
         override fun onSurfaceTextureAvailable(texture: SurfaceTexture, width: Int, height: Int) {
-            openCamera(width, height,CameraCharacteristics.LENS_FACING_BACK)
+            openCamera(width, height, CameraCharacteristics.LENS_FACING_BACK)
         }
 
         override fun onSurfaceTextureSizeChanged(texture: SurfaceTexture, width: Int, height: Int) {
@@ -101,6 +101,7 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var previewRequestBuilder: CaptureRequest.Builder
     private lateinit var previewRequest: CaptureRequest
+
     //start values
     private var CURRENT_CAMERA: Int = 0
     private var state =
@@ -189,7 +190,11 @@ class CameraActivity : AppCompatActivity() {
         startBackgroundThread()
 
         if (mTextureView.isAvailable) {
-            openCamera(mTextureView.width, mTextureView.height,CameraCharacteristics.LENS_FACING_BACK)
+            openCamera(
+                mTextureView.width,
+                mTextureView.height,
+                CameraCharacteristics.LENS_FACING_BACK
+            )
         } else {
             mTextureView.surfaceTextureListener = surfaceTextureListener
         }
@@ -205,8 +210,11 @@ class CameraActivity : AppCompatActivity() {
         if (shouldShowRequestPermissionRationale(CAMERA)) {
             showPermissionAlert()
         } else {
-            requestPermissions(arrayOf(CAMERA, ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE,
-                WRITE_EXTERNAL_STORAGE),
+            requestPermissions(
+                arrayOf(
+                    CAMERA, ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE,
+                    WRITE_EXTERNAL_STORAGE
+                ),
                 REQUEST_CAMERA_PERMISSION
             )
         }
@@ -220,7 +228,12 @@ class CameraActivity : AppCompatActivity() {
         alertBuilder.setPositiveButton(android.R.string.yes) { _, _ ->
             ActivityCompat.requestPermissions(
                 this@CameraActivity,
-                arrayOf(CAMERA, ACCESS_FINE_LOCATION, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE),
+                arrayOf(
+                    CAMERA,
+                    ACCESS_FINE_LOCATION,
+                    WRITE_EXTERNAL_STORAGE,
+                    READ_EXTERNAL_STORAGE
+                ),
                 REQUEST_CAMERA_PERMISSION
             )
         }
@@ -347,9 +360,10 @@ class CameraActivity : AppCompatActivity() {
         val cameraPermission = ContextCompat.checkSelfPermission(this, CAMERA)
         val dataWPermission = ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
         val dataRPermission = ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE)
-        if ( cameraPermission != PackageManager.PERMISSION_GRANTED ||
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED ||
             dataRPermission != PackageManager.PERMISSION_GRANTED ||
-            dataWPermission != PackageManager.PERMISSION_GRANTED ) {
+            dataWPermission != PackageManager.PERMISSION_GRANTED
+        ) {
 
             requestPermissions()
             return
@@ -419,7 +433,8 @@ class CameraActivity : AppCompatActivity() {
             previewRequestBuilder.addTarget(surface)
 
             // Here, we create a CameraCaptureSession for camera preview.
-            cameraDevice?.createCaptureSession(Arrays.asList(surface, imageReader?.surface),
+            cameraDevice?.createCaptureSession(
+                Arrays.asList(surface, imageReader?.surface),
                 object : CameraCaptureSession.StateCallback() {
 
                     override fun onConfigured(cameraCaptureSession: CameraCaptureSession) {
@@ -500,9 +515,9 @@ class CameraActivity : AppCompatActivity() {
                 CaptureRequest.CONTROL_AF_TRIGGER,
                 CameraMetadata.CONTROL_AF_TRIGGER_START
             )
-            previewRequestBuilder.set(CaptureRequest.JPEG_GPS_LOCATION,location)
+            previewRequestBuilder.set(CaptureRequest.JPEG_GPS_LOCATION, location)
 
-            val root=getExternalFilesDir(Environment.DIRECTORY_DCIM)
+            val root = getExternalFilesDir(Environment.DIRECTORY_DCIM)
             file = File(root, PIC_FILE_NAME_BASE + PIC_FORMAT)
             notifyData(
                 this@CameraActivity,
@@ -515,9 +530,8 @@ class CameraActivity : AppCompatActivity() {
 //            MediaScannerConnection.scanFile(this@CameraActivity, arrayOf(file.path), arrayOf("image/jpeg"),null)
 
 
-
-            Log.d(TAG,"LAT: ${location.latitude} LON: ${location.longitude}")
-            Log.d(TAG,"ADDRESS: $address")
+            Log.d(TAG, "LAT: ${location.latitude} LON: ${location.longitude}")
+            Log.d(TAG, "ADDRESS: $address")
 
             state =
                 STATE_WAITING_LOCK
@@ -619,17 +633,17 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun onTakePicture() {
-
-        TakePicBtn.setOnClickListener {
+        take_pic_btn.setOnClickListener {
             Log.d(TAG, "picture request")
+            animate(this,take_pic_btn)
             lockFocus()
         }
     }
 
 
     private fun onChangeCamera() {
-        changeCameraBtn.setOnClickListener {
-            animate(this, changeCameraBtn)
+        change_camera_btn.setOnClickListener {
+            animate(this, change_camera_btn)
             closeCamera()
             if (CURRENT_CAMERA == 0) {
                 openCamera(mTextureView.width, mTextureView.height,CameraCharacteristics.LENS_FACING_FRONT)
@@ -642,9 +656,8 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun onGallery() {
-        galleryBtn.setOnClickListener {
-
-            animate(this, galleryBtn)
+        gallery_btn.setOnClickListener {
+            animate(this, gallery_btn)
             val intent = Intent(this, PhotoListActivity::class.java)
             startActivity(intent)
         }
@@ -663,6 +676,7 @@ class CameraActivity : AppCompatActivity() {
     companion object {
 
         private val ORIENTATIONS = SparseIntArray()
+
         init {
             ORIENTATIONS.append(Surface.ROTATION_0, 90)
             ORIENTATIONS.append(Surface.ROTATION_90, 0)
@@ -709,11 +723,13 @@ class CameraActivity : AppCompatActivity() {
             // Pick the smallest of those big enough. If there is no one big enough, pick the
             // largest of those not big enough.
             if (bigEnough.size > 0) {
-                return Collections.min(bigEnough,
+                return Collections.min(
+                    bigEnough,
                     CompareSizesByArea()
                 )
             } else if (notBigEnough.size > 0) {
-                return Collections.max(notBigEnough,
+                return Collections.max(
+                    notBigEnough,
                     CompareSizesByArea()
                 )
             } else {
