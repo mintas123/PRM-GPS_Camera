@@ -48,6 +48,7 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
             val photosPaths = mutableListOf<String>()
             photos?.forEach { photosPaths.add(it.path) }
+            photosPaths.sortDescending()
             return photosPaths
         }
 

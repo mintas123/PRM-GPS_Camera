@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/galleryBtn"
+        android:id="@+id/gallery_btn"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginEnd="4dp"
@@ -30,10 +30,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toEndOf="@+id/texture_view"
-        app:layout_constraintTop_toBottomOf="@+id/TakePicBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/take_pic_btn" />
 
     <ImageView
-        android:id="@+id/TakePicBtn"
+        android:id="@+id/take_pic_btn"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:background="@drawable/btn_round"
@@ -46,14 +46,14 @@
         app:layout_constraintVertical_bias="0.498" />
 
     <ImageView
-        android:id="@+id/changeCameraBtn"
+        android:id="@+id/change_camera_btn"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="52dp"
         android:background="@drawable/btn_round"
         android:padding="10dp"
         android:src="@drawable/flip_icon"
-        app:layout_constraintBottom_toTopOf="@+id/TakePicBtn"
+        app:layout_constraintBottom_toTopOf="@+id/take_pic_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toEndOf="@+id/texture_view"
