@@ -25,7 +25,7 @@ class PhotoListActivity : AppCompatActivity() {
             layoutManager = GridLayoutManager(this@PhotoListActivity,2)
             addItemDecoration(
                 GridItemDecoration(
-                    15,
+                    50,
                     2
                 )
             )

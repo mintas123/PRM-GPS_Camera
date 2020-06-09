@@ -4,12 +4,14 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.*
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
@@ -58,7 +60,6 @@ fun getLocation(context: Context): Location? {
 fun getAddress(context: Context,latLng: LatLng): String {
     val geocoder = Geocoder(context)
     val addresses: List<Address>?
-//        val address: Address?
     var addressText = ""
 
     try {
@@ -94,3 +95,38 @@ fun getAddress(context: Context,latLng: LatLng): String {
     return addressText
 }
 
+fun getBitmapFromString(
+    text: String,
+    fontSizeSP: Float,
+    context: Context
+): Bitmap {
+    val fontSizePX: Int = convertDipToPix(context, fontSizeSP)
+    val pad = fontSizePX / 9
+    val paint = Paint()
+    paint.isAntiAlias = true
+    paint.color = Color.WHITE
+    paint.textSize = fontSizePX.toFloat()
+    val textWidth = (paint.measureText(text) + pad * 2).toInt()
+    val height = (fontSizePX / 0.75).toInt()
+    val bitmap = Bitmap.createBitmap(textWidth, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val xOriginal = pad.toFloat()
+    canvas.drawText(text, xOriginal, fontSizePX.toFloat(), paint)
+    return bitmap
+}
+private fun convertDipToPix(context: Context, dip: Float): Int {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        dip,
+        context.resources.displayMetrics
+    ).toInt()
+}
+
+fun overlay(original: Bitmap, overlay: Bitmap): Bitmap? {
+    val bmOverlay =
+        Bitmap.createBitmap(original.width, original.height, original.config)
+    val canvas = Canvas(bmOverlay)
+    canvas.drawBitmap(original, Matrix(), null)
+    canvas.drawBitmap(overlay, Matrix(), null)
+    return bmOverlay
+}

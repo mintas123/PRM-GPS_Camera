@@ -3,6 +3,7 @@ package pl.pjatk.s16604.project2.recycler
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recycler_card.view.*
 import pl.pjatk.s16604.project2.R
 import java.io.File
+import java.lang.Exception
 
 
 class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -22,9 +24,8 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     var mView: View = itemView
 
-    // todo get from folder
     fun bind(photo: Bitmap) {
-            this.photo.setImageBitmap(photo)
+        this.photo.setImageBitmap(photo)
     }
 
     class RecyclerAdapterMenu(context: Context) : RecyclerView.Adapter<PhotoViewHolder>() {
@@ -38,12 +39,21 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private fun loadData(): MutableList<String> {
 
-            val root=myContext.getExternalFilesDir(Environment.DIRECTORY_DCIM)
+            val root = myContext.getExternalFilesDir(Environment.DIRECTORY_DCIM)
             var photos: MutableList<File>? = null
 
             if (root != null && !root.listFiles().isNullOrEmpty()) {
-                photos=root.listFiles().toMutableList()
-            }else{
+                photos = root.listFiles().toMutableList()
+                try {
+                    val exifInterface = ExifInterface(photos[0])
+                    val latLong = FloatArray(2)
+                    if (exifInterface.getLatLong(latLong)) {
+                        Log.d(TAG, "XXXXXX - ${exifInterface.getLatLong(latLong)}")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "XX Couldn't read exif info: $e")
+                }
+            } else {
                 Log.d(TAG, "INVALID MEDIA ROOT")
             }
             val photosPaths = mutableListOf<String>()
@@ -68,30 +78,33 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-            val bitmap = decodeSampledBitmapFromFile(photos[position],128,128)
+            val bitmap = decodeSampledBitmapFromFile(photos[position], 256, 256)
             holder.bind(bitmap)
 
             holder.mView.setOnClickListener {
                 //todo show full picture
             }
         }
+
         private fun decodeSampledBitmapFromFile(
             file: String,
             reqWidth: Int,
             reqHeight: Int
         ): Bitmap {
-            // First decode with inJustDecodeBounds=true to check dimensions
             return BitmapFactory.Options().run {
                 inJustDecodeBounds = true
-                BitmapFactory.decodeFile(file,this)
-                // Calculate inSampleSize
+                BitmapFactory.decodeFile(file, this)
                 inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
-                // Decode bitmap with inSampleSize set
                 inJustDecodeBounds = false
-                BitmapFactory.decodeFile(file,this)
+                BitmapFactory.decodeFile(file, this)
             }
         }
-        private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+
+        private fun calculateInSampleSize(
+            options: BitmapFactory.Options,
+            reqWidth: Int,
+            reqHeight: Int
+        ): Int {
             val (height: Int, width: Int) = options.run { outHeight to outWidth }
             var inSampleSize = 1
 
@@ -106,10 +119,11 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             return inSampleSize
         }
     }
+
     companion object {
-        const val TAG = "RECYCYLER"
+        const val TAG = "XX_RECYCYLER"
     }
 
-    }
+}
 
 

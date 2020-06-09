@@ -89,12 +89,14 @@ class CameraActivity : AppCompatActivity() {
 
     private var imageReader: ImageReader? = null
     private lateinit var file: File
+    private lateinit var address: String
 
     private val onImageAvailableListener = ImageReader.OnImageAvailableListener {
         backgroundHandler?.post(
             ImageSaver(
                 it.acquireNextImage(),
-                file
+                file,
+                getBitmapFromString(address,60f,this)
             )
         )
     }
@@ -256,11 +258,8 @@ class CameraActivity : AppCompatActivity() {
             for (cameraId in manager.cameraIdList) {
                 val characteristics = manager.getCameraCharacteristics(cameraId)
 
-                // We don't use a front facing camera in this sample.
                 val cameraDirection = characteristics.get(CameraCharacteristics.LENS_FACING)
-                if (cameraDirection != null &&
-                    cameraDirection != facing
-                ) {
+                if (cameraDirection != null && cameraDirection != facing) {
                     continue
                 }
 
@@ -268,7 +267,6 @@ class CameraActivity : AppCompatActivity() {
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP
                 ) ?: continue
 
-                // For still image captures, we use the largest available size.
                 val largest = Collections.max(
                     listOf(*map.getOutputSizes(ImageFormat.JPEG)),
                     CompareSizesByArea()
@@ -279,9 +277,6 @@ class CameraActivity : AppCompatActivity() {
                 ).apply {
                     setOnImageAvailableListener(onImageAvailableListener, backgroundHandler)
                 }
-
-                // Find out if we need to swap dimension to get the preview size relative to sensor
-                // coordinate.
                 val displayRotation = windowManager.defaultDisplay.rotation
 
                 sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
@@ -299,9 +294,6 @@ class CameraActivity : AppCompatActivity() {
                 if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) maxPreviewHeight =
                     MAX_PREVIEW_HEIGHT
 
-                // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-                // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-                // garbage capture data.
                 previewSize =
                     chooseOptimalSize(
                         map.getOutputSizes(SurfaceTexture::class.java),
@@ -310,21 +302,16 @@ class CameraActivity : AppCompatActivity() {
                         largest
                     )
 
-                // We fit the aspect ratio of TextureView to the size of preview we picked.
                 if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     mTextureView.setAspectRatio(previewSize.width, previewSize.height)
                 } else {
                     mTextureView.setAspectRatio(previewSize.height, previewSize.width)
                 }
 
-                // Check if the flash is supported.
                 flashSupported =
                     characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
 
                 this.cameraId = cameraId
-
-                // We've found a viable camera and finished setting up member variables,
-                // so we don't need to iterate through other available cameras.
                 return
             }
         } catch (e: CameraAccessException) {
@@ -420,21 +407,17 @@ class CameraActivity : AppCompatActivity() {
         try {
             val texture = mTextureView.surfaceTexture
 
-            // We configure the size of default buffer to be the size of camera preview we want.
             texture.setDefaultBufferSize(previewSize.width, previewSize.height)
 
-            // This is the output Surface we need to start preview.
             val surface = Surface(texture)
 
-            // We set up a CaptureRequest.Builder with the output Surface.
             previewRequestBuilder = cameraDevice!!.createCaptureRequest(
                 CameraDevice.TEMPLATE_PREVIEW
             )
             previewRequestBuilder.addTarget(surface)
 
-            // Here, we create a CameraCaptureSession for camera preview.
             cameraDevice?.createCaptureSession(
-                Arrays.asList(surface, imageReader?.surface),
+                listOf(surface, imageReader?.surface),
                 object : CameraCaptureSession.StateCallback() {
 
                     override fun onConfigured(cameraCaptureSession: CameraCaptureSession) {
@@ -504,7 +487,7 @@ class CameraActivity : AppCompatActivity() {
 
         try {
             val location = getLocation(this)
-            val address = getAddress(
+            address = getAddress(
                 this,
                 LatLng(location!!.latitude, location.longitude)
             )
@@ -523,12 +506,6 @@ class CameraActivity : AppCompatActivity() {
                 this@CameraActivity,
                 file.toURI()
             )
-//            val client = MyMediaConnectorClient(newfile)
-//            val scanner = MediaScannerConnection(context, client)
-//            client.setScanner(scanner)
-//            scanner.connect()
-//            MediaScannerConnection.scanFile(this@CameraActivity, arrayOf(file.path), arrayOf("image/jpeg"),null)
-
 
             Log.d(TAG, "LAT: ${location.latitude} LON: ${location.longitude}")
             Log.d(TAG, "ADDRESS: $address")
@@ -561,7 +538,6 @@ class CameraActivity : AppCompatActivity() {
         } catch (e: CameraAccessException) {
             Log.e(TAG, e.toString())
         }
-
     }
 
     private fun captureStillPicture() {
@@ -590,7 +566,7 @@ class CameraActivity : AppCompatActivity() {
                     request: CaptureRequest,
                     result: TotalCaptureResult
                 ) {
-                    Toast.makeText(this@CameraActivity, "Seaved: $file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CameraActivity, "Saved: $file", Toast.LENGTH_SHORT).show()
                     Log.d(TAG, file.toString())
                     unlockFocus()
                 }
@@ -684,7 +660,7 @@ class CameraActivity : AppCompatActivity() {
             ORIENTATIONS.append(Surface.ROTATION_270, 180)
         }
 
-        const val TAG = "CAMERA_ACTIVITY"
+        const val TAG = "XX_CAMERA_ACTIVITY"
         private const val REQUEST_CAMERA_PERMISSION = 1
 
         private const val STATE_PREVIEW = 0
@@ -744,68 +720,5 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 }
-
-
-//
-//    fun mark(
-//        src: Bitmap,
-//        watermark: String,
-//        location: Point,
-//        color: Int,
-//        alpha: Int,
-//        size: Float,
-//        underline: Boolean
-//    ): Bitmap? {
-//        val w = src.width
-//        val h = src.height
-//        val result = Bitmap.createBitmap(w, h, src.config)
-//        val canvas = Canvas(result)
-//        canvas.drawBitmap(src, 0, 0, null)
-//        val paint = Paint()
-//        paint.setColor(color)
-//        paint.setAlpha(alpha)
-//        paint.setTextSize(size)
-//        paint.setAntiAlias(true)
-//        paint.setUnderlineText(underline)
-//        canvas.drawText(watermark, location.x.toFloat(), location.y.toFloat(), paint)
-//        return result
-//    }
-
-
-////PERMISSIONS PART
-//override fun onRequestPermissionsResult(
-//    requestCode: Int,
-//    permissions: Array<out String>,
-//    grantResults: IntArray
-//) {
-//    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//    EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//}
-//
-//@AfterPermissionGranted(CameraActivity.REQUEST_CAMERA_PERMISSION)
-//private fun checkCameraPermission(cameraFacing: Int) {
-//    if (EasyPermissions.hasPermissions(this, CAMERA) &&
-//        EasyPermissions.hasPermissions(this, ACCESS_FINE_LOCATION)) {
-//        Log.d(CameraActivity.TAG, "APP HAS CAMERA ADN GPS PERMISSION")
-//        connectCamera(cameraFacing)
-//    } else {
-//        showPermissionAlert()
-//        if (!EasyPermissions.hasPermissions(this, CAMERA)) {
-//            EasyPermissions.requestPermissions(
-//                this, "Camera app requires camera access",
-//                CameraActivity.REQUEST_CAMERA_PERMISSION, CAMERA
-//            )
-//        }
-//        if (!EasyPermissions.hasPermissions(this, ACCESS_FINE_LOCATION)) {
-//            EasyPermissions.requestPermissions(
-//                this, "This app requires GPS access",
-//                CameraActivity.REQUEST_GPS_PERMISSION, ACCESS_FINE_LOCATION
-//            )
-//        }
-//
-//    }
-//}
-//
-
 
 
