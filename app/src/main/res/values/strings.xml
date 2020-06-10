@@ -3,4 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="info">KURWAAAA :3</string>
     <string name="ImagePlaceHolder">picture</string>
+    <string name="title_activity_fullscreen_photo">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
