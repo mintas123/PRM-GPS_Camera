@@ -1,8 +1,8 @@
 package pl.pjatk.s16604.project2.recycler
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.ExifInterface
 import android.os.Environment
 import android.util.Log
@@ -13,14 +13,15 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recycler_card.view.*
 import pl.pjatk.s16604.project2.R
+import pl.pjatk.s16604.project2.activities.FullscreenPhotoActivity
+import pl.pjatk.s16604.project2.utils.decodeSampledBitmapFromFile
 import java.io.File
-import java.lang.Exception
 
 
 class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
-    val photo: ImageView = itemView.photo
+    private val photo: ImageView = itemView.photo
 
     var mView: View = itemView
 
@@ -28,13 +29,13 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         this.photo.setImageBitmap(photo)
     }
 
-    class RecyclerAdapterMenu(context: Context) : RecyclerView.Adapter<PhotoViewHolder>() {
+    class RecyclerAdapter(context: Context) : RecyclerView.Adapter<PhotoViewHolder>() {
 
-        private var photos: MutableList<String>
+        private var photosPaths: MutableList<String>
         private var myContext: Context = context
 
         init {
-            photos = loadData()
+            photosPaths = loadData()
         }
 
         private fun loadData(): MutableList<String> {
@@ -45,6 +46,7 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             if (root != null && !root.listFiles().isNullOrEmpty()) {
                 photos = root.listFiles().toMutableList()
                 try {
+                    // todo fixme
                     val exifInterface = ExifInterface(photos[0])
                     val latLong = FloatArray(2)
                     if (exifInterface.getLatLong(latLong)) {
@@ -58,6 +60,7 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
             val photosPaths = mutableListOf<String>()
             photos?.forEach { photosPaths.add(it.path) }
+            // todo filter by location
             photosPaths.sortDescending()
             return photosPaths
         }
@@ -74,49 +77,19 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         override fun getItemCount(): Int {
-            return photos.size
+            return photosPaths.size
         }
 
         override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-            val bitmap = decodeSampledBitmapFromFile(photos[position], 256, 256)
+            val bitmap = decodeSampledBitmapFromFile(photosPaths[position], 256, 256)
             holder.bind(bitmap)
 
             holder.mView.setOnClickListener {
-                //todo show full picture
+                val intent = Intent(myContext, FullscreenPhotoActivity::class.java)
+                intent.putExtra("picPath",photosPaths[position])
+                myContext.startActivity(intent)
+
             }
-        }
-
-        private fun decodeSampledBitmapFromFile(
-            file: String,
-            reqWidth: Int,
-            reqHeight: Int
-        ): Bitmap {
-            return BitmapFactory.Options().run {
-                inJustDecodeBounds = true
-                BitmapFactory.decodeFile(file, this)
-                inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
-                inJustDecodeBounds = false
-                BitmapFactory.decodeFile(file, this)
-            }
-        }
-
-        private fun calculateInSampleSize(
-            options: BitmapFactory.Options,
-            reqWidth: Int,
-            reqHeight: Int
-        ): Int {
-            val (height: Int, width: Int) = options.run { outHeight to outWidth }
-            var inSampleSize = 1
-
-            if (height > reqHeight || width > reqWidth) {
-                val halfHeight: Int = height / 2
-                val halfWidth: Int = width / 2
-
-                while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                    inSampleSize *= 2
-                }
-            }
-            return inSampleSize
         }
     }
 

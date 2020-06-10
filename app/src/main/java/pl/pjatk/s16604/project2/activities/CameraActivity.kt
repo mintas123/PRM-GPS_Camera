@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit
 
 
 var PIC_FILE_NAME_BASE = ""
-var PIC_FORMAT = ".jpg"
 
 
 class CameraActivity : AppCompatActivity() {
@@ -432,8 +431,6 @@ class CameraActivity : AppCompatActivity() {
                                 CaptureRequest.CONTROL_AF_MODE,
                                 CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                             )
-                            // Flash is automatically enabled when necessary.
-                            setAutoFlash(previewRequestBuilder)
 
                             // Finally, we start displaying the camera preview.
                             previewRequest = previewRequestBuilder.build()
@@ -557,7 +554,7 @@ class CameraActivity : AppCompatActivity() {
                     CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 )
-            }?.also { setAutoFlash(it) }
+            }
 
             val captureCallback = object : CameraCaptureSession.CaptureCallback() {
 
@@ -590,7 +587,6 @@ class CameraActivity : AppCompatActivity() {
                 CaptureRequest.CONTROL_AF_TRIGGER,
                 CameraMetadata.CONTROL_AF_TRIGGER_CANCEL
             )
-            setAutoFlash(previewRequestBuilder)
             captureSession?.capture(
                 previewRequestBuilder.build(), captureCallback,
                 backgroundHandler
@@ -639,16 +635,6 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun setAutoFlash(requestBuilder: CaptureRequest.Builder) {
-        if (flashSupported) {
-            requestBuilder.set(
-                CaptureRequest.CONTROL_AE_MODE,
-                CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
-            )
-        }
-    }
-
     companion object {
 
         private val ORIENTATIONS = SparseIntArray()
@@ -659,7 +645,7 @@ class CameraActivity : AppCompatActivity() {
             ORIENTATIONS.append(Surface.ROTATION_180, 270)
             ORIENTATIONS.append(Surface.ROTATION_270, 180)
         }
-
+        const val PIC_FORMAT = ".jpg"
         const val TAG = "XX_CAMERA_ACTIVITY"
         private const val REQUEST_CAMERA_PERMISSION = 1
 
