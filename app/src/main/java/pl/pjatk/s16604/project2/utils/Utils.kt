@@ -11,6 +11,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.AnimationUtils
 import pl.pjatk.s16604.project2.R
+import pl.pjatk.s16604.project2.WHITE
 import pl.pjatk.s16604.project2.activities.CameraActivity
 import java.io.File
 import java.net.URI
@@ -44,13 +45,16 @@ fun notifyData(context: Context, fileUri: URI) {
 fun getBitmapFromString(
     text: String,
     fontSizeSP: Float,
-    context: Context
+    context: Context,
+    color: String
 ): Bitmap {
     val fontSizePX: Int = convertDipToPix(context, fontSizeSP)
     val pad = fontSizePX / 9
     val paint = Paint()
     paint.isAntiAlias = true
-    paint.color = Color.WHITE
+    val parseColor = Color.parseColor("#$color")
+    paint.color = parseColor
+    Log.d("XX_COLOR", "Color: $color")
     paint.textSize = fontSizePX.toFloat()
     val textWidth = (paint.measureText(text) + pad * 2).toInt()
     val height = (fontSizePX / 0.75).toInt()

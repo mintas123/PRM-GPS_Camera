@@ -3,6 +3,7 @@ package pl.pjatk.s16604.project2.activities
 import android.Manifest.permission.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.synthetic.main.activity_app_settings.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import pl.pjatk.s16604.project2.*
 import pl.pjatk.s16604.project2.utils.ImageSaver
@@ -37,10 +39,15 @@ import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
 
-var PIC_FILE_NAME_BASE = ""
+private val STORAGE = StorageManager()
 
 
 class CameraActivity : AppCompatActivity() {
+
+    private lateinit var sharedPreferences:SharedPreferences
+    private var color = WHITE
+    private var distance = 100
+
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
 
@@ -95,7 +102,7 @@ class CameraActivity : AppCompatActivity() {
             ImageSaver(
                 it.acquireNextImage(),
                 file,
-                getBitmapFromString(address,60f,this),
+                getBitmapFromString(address,60f,this, color),
                 this
             )
         )
@@ -105,6 +112,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var previewRequest: CaptureRequest
 
     //start values
+    private var PIC_FILE_NAME = ""
     private var CURRENT_CAMERA: Int = 0
     private var state =
         STATE_PREVIEW
@@ -180,11 +188,13 @@ class CameraActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
+        Log.d("XX_", "OnCreateCAM: $color")
         mTextureView = texture_view
-        PIC_FILE_NAME_BASE = "dupa"
+        PIC_FILE_NAME = "dupa"
         onTakePicture()
         onChangeCamera()
         onGallery()
+        onSettings()
     }
 
     override fun onResume() {
@@ -492,14 +502,14 @@ class CameraActivity : AppCompatActivity() {
             )
             val date = System.currentTimeMillis()
             val dateFormat: DateFormat = SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.getDefault())
-            PIC_FILE_NAME_BASE = dateFormat.format(date)
+            PIC_FILE_NAME = dateFormat.format(date)
             previewRequestBuilder.set(
                 CaptureRequest.CONTROL_AF_TRIGGER,
                 CameraMetadata.CONTROL_AF_TRIGGER_START
             )
 
             val root = getExternalFilesDir(Environment.DIRECTORY_DCIM)
-            file = File(root, PIC_FILE_NAME_BASE + PIC_FORMAT)
+            file = File(root, PIC_FILE_NAME + PIC_FORMAT)
             notifyData(
                 this@CameraActivity,
                 file.toURI()
@@ -637,6 +647,27 @@ class CameraActivity : AppCompatActivity() {
             val intent = Intent(this, PhotoListActivity::class.java)
             startActivity(intent)
         }
+    }
+    private fun onSettings() {
+        settings_btn.setOnClickListener {
+            animate(this,gallery_btn)
+            val intent = Intent(this,AppSettingsActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun loadData() {
+        val metadata = STORAGE.loadData(this)
+        sharedPreferences = metadata.sharedPreferences
+        color = metadata.color
+        distance = metadata.dist
+    }
+    private fun saveData() {
+        STORAGE.saveData(
+            ProjectMetadata(
+                sharedPreferences,color,distance
+            )
+        )
     }
 
     companion object {
