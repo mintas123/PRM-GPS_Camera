@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.recycler_card.view.*
 import pl.pjatk.s16604.project2.R
 import pl.pjatk.s16604.project2.activities.FullscreenPhotoActivity
 import pl.pjatk.s16604.project2.utils.decodeSampledBitmapFromFile
+import pl.pjatk.s16604.project2.utils.getLocation
 import java.io.File
 
 
@@ -45,24 +46,30 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             if (root != null && !root.listFiles().isNullOrEmpty()) {
                 photos = root.listFiles().toMutableList()
-                try {
-                    // todo fixme
-                    val exifInterface = ExifInterface(photos[0])
-                    val latLong = FloatArray(2)
-                    if (exifInterface.getLatLong(latLong)) {
-                        Log.d(TAG, "XXXXXX - ${exifInterface.getLatLong(latLong)}")
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "XX Couldn't read exif info: $e")
-                }
+//                try {
+//                    // todo fixme
+//                    val exifInterface = ExifInterface(photos[0])
+//                    val latLong = FloatArray(2)
+//                    if (exifInterface.getLatLong(latLong)) {
+//                        Log.d(TAG, "XXXXXX - ${exifInterface.getLatLong(latLong)}")
+//                    }
+//                } catch (e: Exception) {
+//                    Log.e(TAG, "XX Couldn't read exif info: $e")
+//                }
             } else {
                 Log.d(TAG, "INVALID MEDIA ROOT")
             }
-            val photosPaths = mutableListOf<String>()
-            photos?.forEach { photosPaths.add(it.path) }
-            // todo filter by location
-            photosPaths.sortDescending()
-            return photosPaths
+            val currentLocation = getLocation(myContext)
+            if (currentLocation !== null){
+               // photos!!.filter { currentLocation.distanceTo(it.location) < 100 } todo FILTER BY LOCATION
+            }
+
+            val loadedPaths = mutableListOf<String>()
+            photos?.forEach { loadedPaths.add(it.path) }
+
+
+            loadedPaths.sortDescending()
+            return loadedPaths
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {

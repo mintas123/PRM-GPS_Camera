@@ -95,7 +95,8 @@ class CameraActivity : AppCompatActivity() {
             ImageSaver(
                 it.acquireNextImage(),
                 file,
-                getBitmapFromString(address,60f,this)
+                getBitmapFromString(address,60f,this),
+                this
             )
         )
     }
@@ -413,6 +414,7 @@ class CameraActivity : AppCompatActivity() {
             previewRequestBuilder = cameraDevice!!.createCaptureRequest(
                 CameraDevice.TEMPLATE_PREVIEW
             )
+
             previewRequestBuilder.addTarget(surface)
 
             cameraDevice?.createCaptureSession(
@@ -495,7 +497,6 @@ class CameraActivity : AppCompatActivity() {
                 CaptureRequest.CONTROL_AF_TRIGGER,
                 CameraMetadata.CONTROL_AF_TRIGGER_START
             )
-            previewRequestBuilder.set(CaptureRequest.JPEG_GPS_LOCATION, location)
 
             val root = getExternalFilesDir(Environment.DIRECTORY_DCIM)
             file = File(root, PIC_FILE_NAME_BASE + PIC_FORMAT)
@@ -550,6 +551,9 @@ class CameraActivity : AppCompatActivity() {
                     CaptureRequest.JPEG_ORIENTATION,
                     (ORIENTATIONS.get(rotation) + sensorOrientation + 270) % 360
                 )
+                set(
+                    CaptureRequest.JPEG_GPS_LOCATION,
+                    getLocation(this@CameraActivity))
                 set(
                     CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
