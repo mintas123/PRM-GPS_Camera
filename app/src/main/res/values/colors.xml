@@ -6,5 +6,6 @@
     <color name="colorBackground">#282726</color>
     <color name="colorFancyOrange">#f05837</color>
 
+    <color name="colorBrightText">#ECECEC</color>
     <color name="black_overlay">#66000000</color>
 </resources>

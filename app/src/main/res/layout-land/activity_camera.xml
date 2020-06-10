@@ -7,6 +7,19 @@
     tools:context=".activities.CameraActivity"
     android:background="@color/colorBackground">
 
+    <ImageView
+        android:id="@+id/settings_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_round"
+        android:padding="10dp"
+        android:src="@drawable/setting_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/texture_view"
+        app:layout_constraintHorizontal_bias="0.592"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.048" />
 
     <pl.pjatk.s16604.project2.utils.AutoFitTextureView
         android:id="@+id/texture_view"
