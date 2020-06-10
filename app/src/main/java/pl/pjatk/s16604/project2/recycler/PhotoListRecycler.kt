@@ -2,9 +2,10 @@ package pl.pjatk.s16604.project2.recycler
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
-import android.media.ExifInterface
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -46,23 +47,43 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             if (root != null && !root.listFiles().isNullOrEmpty()) {
                 photos = root.listFiles().toMutableList()
-//                try {
-//                    // todo fixme
-//                    val exifInterface = ExifInterface(photos[0])
-//                    val latLong = FloatArray(2)
-//                    if (exifInterface.getLatLong(latLong)) {
-//                        Log.d(TAG, "XXXXXX - ${exifInterface.getLatLong(latLong)}")
-//                    }
-//                } catch (e: Exception) {
-//                    Log.e(TAG, "XX Couldn't read exif info: $e")
-//                }
             } else {
                 Log.d(TAG, "INVALID MEDIA ROOT")
             }
             val currentLocation = getLocation(myContext)
-            if (currentLocation !== null){
-               // photos!!.filter { currentLocation.distanceTo(it.location) < 100 } todo FILTER BY LOCATION
-            }
+
+            val mColumnProjection = arrayOf(
+                MediaStore.Images.ImageColumns.LONGITUDE,
+                MediaStore.Images.ImageColumns.LATITUDE,
+                MediaStore.Images.ImageColumns.DATA
+            )
+            val pathArray= mutableListOf<String>()
+            val mSelection = MediaStore.Images.ImageColumns.DATA + " LIKE ?"
+            val mSelectionArg = "%data/pl.pjatk.s16604.project2/files%"
+                if (currentLocation !== null) {
+                    val contentResolver = myContext.contentResolver
+                    val cursor: Cursor = contentResolver.query(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        mColumnProjection,
+                        mSelection,
+                        arrayOf(mSelectionArg),
+                        null
+                    )
+                    while (cursor.moveToNext()) {
+                        val data = "${cursor.getString(0)} :  ${cursor.getString(1)} : ${cursor.getString(2)} "
+                        pathArray.add(data)
+                    }
+                    Log.d(TAG,"Photos found: ${cursor.count}")
+                    pathArray.forEach{ Log.d(TAG, it)}
+
+                    cursor.close()
+
+                } else {
+                    Log.d(TAG,"You suck")
+
+                }
+            // photos!!.filter { currentLocation.distanceTo(it.location) < 100 } todo FILTER BY LOCATION
+
 
             val loadedPaths = mutableListOf<String>()
             photos?.forEach { loadedPaths.add(it.path) }
@@ -93,7 +114,7 @@ class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             holder.mView.setOnClickListener {
                 val intent = Intent(myContext, FullscreenPhotoActivity::class.java)
-                intent.putExtra("picPath",photosPaths[position])
+                intent.putExtra("picPath", photosPaths[position])
                 myContext.startActivity(intent)
 
             }

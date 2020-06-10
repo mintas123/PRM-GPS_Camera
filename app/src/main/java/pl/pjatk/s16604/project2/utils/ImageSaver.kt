@@ -59,6 +59,7 @@ internal class ImageSaver(
             values.put(MediaStore.Images.ImageColumns.HEIGHT, height)
             values.put(MediaStore.Images.ImageColumns.LONGITUDE, longitude)
             values.put(MediaStore.Images.ImageColumns.LATITUDE, latitude)
+            Log.d(TAG, "PATH: ${values.get(MediaStore.Images.ImageColumns.DATA)}")
 
             Log.d(TAG, "LON: ${values.get(MediaStore.Images.ImageColumns.LATITUDE)}")
             Log.d(TAG, "LAT: ${values.get(MediaStore.Images.ImageColumns.LONGITUDE)}")
