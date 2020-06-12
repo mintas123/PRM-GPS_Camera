@@ -3,12 +3,14 @@ package pl.pjatk.s16604.project2
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import pl.pjatk.s16604.project2.models.ProjectMetadata
 
 
 const val PREFS_FILENAME = "PROD"
 const val WATERMARK_COLOR = "COLOR"
 const val PROXIMITY = "DIST"
 const val WHITE = "FFFFFFFF"
+const val BLACK = "FF000000"
 
 class StorageManager {
 
@@ -23,7 +25,11 @@ class StorageManager {
         dist = sharedPreferences.getInt(PROXIMITY, 100)
         Log.d("XX_", "LOADED>>> $color")
 
-        return ProjectMetadata(sharedPreferences, color, dist)
+        return ProjectMetadata(
+            sharedPreferences,
+            color,
+            dist
+        )
     }
 
     fun saveData(md: ProjectMetadata) {

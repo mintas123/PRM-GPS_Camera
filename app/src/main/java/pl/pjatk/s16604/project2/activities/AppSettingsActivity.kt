@@ -7,9 +7,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
-import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager
 import kotlinx.android.synthetic.main.activity_app_settings.*
-import pl.pjatk.s16604.project2.ProjectMetadata
+import pl.pjatk.s16604.project2.models.ProjectMetadata
 import pl.pjatk.s16604.project2.R
 import pl.pjatk.s16604.project2.StorageManager
 import pl.pjatk.s16604.project2.WHITE
@@ -94,7 +93,7 @@ class AppSettingsActivity : AppCompatActivity() {
     private fun saveData() {
         STORAGE.saveData(
             ProjectMetadata(
-                sharedPreferences,color,distance
+                sharedPreferences, color, distance
             )
         )
     }

@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.*
 import android.media.Image
-import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import java.io.ByteArrayOutputStream
@@ -25,7 +24,6 @@ internal class ImageSaver(
     private val saveImageExecutor: Executor = Executors.newSingleThreadExecutor()
 
     override fun run() {
-
 
         val jpegByteBuffer = image.planes[0].buffer
         val jpegByteArray = ByteArray(jpegByteBuffer.remaining())
@@ -60,7 +58,6 @@ internal class ImageSaver(
             values.put(MediaStore.Images.ImageColumns.LONGITUDE, longitude)
             values.put(MediaStore.Images.ImageColumns.LATITUDE, latitude)
             Log.d(TAG, "PATH: ${values.get(MediaStore.Images.ImageColumns.DATA)}")
-
             Log.d(TAG, "LON: ${values.get(MediaStore.Images.ImageColumns.LATITUDE)}")
             Log.d(TAG, "LAT: ${values.get(MediaStore.Images.ImageColumns.LONGITUDE)}")
             var output: FileOutputStream? = null
@@ -83,9 +80,6 @@ internal class ImageSaver(
             mContext.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
         }
-
-
-
     }
 
     companion object {

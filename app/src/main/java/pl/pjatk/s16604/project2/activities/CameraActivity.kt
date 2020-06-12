@@ -24,9 +24,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.android.synthetic.main.activity_app_settings.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import pl.pjatk.s16604.project2.*
+import pl.pjatk.s16604.project2.models.ProjectMetadata
 import pl.pjatk.s16604.project2.utils.ImageSaver
 import pl.pjatk.s16604.project2.utils.*
 import pub.devrel.easypermissions.EasyPermissions
@@ -102,7 +102,7 @@ class CameraActivity : AppCompatActivity() {
             ImageSaver(
                 it.acquireNextImage(),
                 file,
-                getBitmapFromString(address,60f,this, color),
+                getBitmapFromString(address,60f,this, BLACK),
                 this
             )
         )
@@ -496,10 +496,13 @@ class CameraActivity : AppCompatActivity() {
 
         try {
             val location = getLocation(this)
-            address = getAddress(
-                this,
-                LatLng(location!!.latitude, location.longitude)
-            )
+            address = if (location!== null){
+                getAddress(
+                    this,
+                    LatLng(location.latitude, location.longitude)
+                )
+            } else ""
+
             val date = System.currentTimeMillis()
             val dateFormat: DateFormat = SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.getDefault())
             PIC_FILE_NAME = dateFormat.format(date)
@@ -515,7 +518,7 @@ class CameraActivity : AppCompatActivity() {
                 file.toURI()
             )
 
-            Log.d(TAG, "LAT: ${location.latitude} LON: ${location.longitude}")
+            Log.d(TAG, "LAT: ${location?.latitude} LON: ${location?.longitude}")
             Log.d(TAG, "ADDRESS: $address")
 
             state =
@@ -665,7 +668,7 @@ class CameraActivity : AppCompatActivity() {
     private fun saveData() {
         STORAGE.saveData(
             ProjectMetadata(
-                sharedPreferences,color,distance
+                sharedPreferences, color, distance
             )
         )
     }
