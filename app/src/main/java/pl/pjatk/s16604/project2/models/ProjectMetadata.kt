@@ -1,4 +1,4 @@
-package pl.pjatk.s16604.project2
+package pl.pjatk.s16604.project2.models
 
 import android.content.SharedPreferences
 
