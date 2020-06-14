@@ -68,6 +68,8 @@ fun getAddress(context: Context, latLng: LatLng): String {
 
 fun filterPhotos(context: Context): MutableList<String> {
 
+    val STORAGE_MANAGER = pl.pjatk.s16604.project2.StorageManager()
+
     val currentLocation = getLocation(context)
     val metadataList = mutableListOf<PhotoMetadata>()
     val pathList = mutableListOf<String>()
@@ -101,6 +103,7 @@ fun filterPhotos(context: Context): MutableList<String> {
         Log.d(PhotoViewHolder.TAG, "Photos found: ${metadataList.size}")
 
         //filter only those photos that dont have location or are close enough
+        val threshold = STORAGE_MANAGER.loadData(context).dist
         metadataList.forEach {
             if (it.lat !== null && it.lon !== null) {
                 val floatArray = FloatArray(1)
@@ -108,19 +111,19 @@ fun filterPhotos(context: Context): MutableList<String> {
                     currentLocation.latitude, currentLocation.longitude,
                     it.lat.toDouble(), it.lon.toDouble(), floatArray
                 )
-                if (floatArray[0] < 1000) {
-                    Log.d(PhotoViewHolder.TAG, "Photo added, dist: ${floatArray[0]}")
+                if (floatArray[0] < threshold) {
+                    Log.d(PhotoViewHolder.TAG, "Photo added, dist: ${floatArray[0]}, Threshold: $threshold")
                     pathList.add(it.path)
                 } else {
                     Log.d(
                         PhotoViewHolder.TAG,
-                        "Photo further than 100, dist:  ${floatArray[0]}"
+                        "Photo further than $threshold, dist:  ${floatArray[0]}"
                     )
                 }
             } else {
                 //added null location to the list for sake of showing stuff on my phone
                 pathList.add(it.path)
-                Log.d(PhotoViewHolder.TAG, "NULL LOCATION ${it.path}")
+                Log.d(PhotoViewHolder.TAG, "NULL LOCATION ${it.path}, Threshold: $threshold")
             }
         }
         cursor.close()

@@ -1,6 +1,10 @@
 package pl.pjatk.s16604.project2.activities
 
 import android.Manifest.permission.*
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.app.job.JobService
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -27,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_camera.*
 import pl.pjatk.s16604.project2.*
 import pl.pjatk.s16604.project2.models.ProjectMetadata
+import pl.pjatk.s16604.project2.services.LocationJobService
 import pl.pjatk.s16604.project2.utils.ImageSaver
 import pl.pjatk.s16604.project2.utils.*
 import pub.devrel.easypermissions.EasyPermissions
@@ -102,7 +107,8 @@ class CameraActivity : AppCompatActivity() {
             ImageSaver(
                 it.acquireNextImage(),
                 file,
-                getBitmapFromString(address,60f,this, BLACK),
+                getBitmapFromString(address,60f,this, color),
+                sensorOrientation,
                 this
             )
         )
@@ -186,9 +192,9 @@ class CameraActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        loadData()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
-        Log.d("XX_", "OnCreateCAM: $color")
         mTextureView = texture_view
         PIC_FILE_NAME = "dupa"
         onTakePicture()
@@ -198,6 +204,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        loadData()
         super.onResume()
         startBackgroundThread()
 
@@ -215,7 +222,14 @@ class CameraActivity : AppCompatActivity() {
     override fun onPause() {
         closeCamera()
         stopBackgroundThread()
+        saveData()
         super.onPause()
+    }
+
+    override fun onStop() {
+        startBackgroundJob()
+        saveData()
+        super.onStop()
     }
 
     private fun requestPermissions() {
@@ -671,6 +685,28 @@ class CameraActivity : AppCompatActivity() {
                 sharedPreferences, color, distance
             )
         )
+    }
+
+    private fun startBackgroundJob() {
+        val componentName = ComponentName(this,LocationJobService::class.java)
+        val info = JobInfo.Builder(123,componentName)
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) //some requirements
+            .setPersisted(true)
+            .setPeriodic(1000*60*15)
+            .build()
+
+        val scheduler : JobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val resultCode = scheduler.schedule(info)
+        if (resultCode == JobScheduler.RESULT_SUCCESS) {
+            Log.d(TAG,"Job scheduled")
+        } else {
+            Log.d(TAG,"Job scheduling failed")
+        }
+    }
+    private fun cancelJob(){
+        val scheduler : JobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        scheduler.cancel(123)
+        Log.d(TAG,"canceled job")
     }
 
     companion object {

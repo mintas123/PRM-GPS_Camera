@@ -2,11 +2,7 @@ package pl.pjatk.s16604.project2.recycler
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Bitmap
-import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +13,6 @@ import pl.pjatk.s16604.project2.R
 import pl.pjatk.s16604.project2.activities.FullscreenPhotoActivity
 import pl.pjatk.s16604.project2.utils.decodeSampledBitmapFromFile
 import pl.pjatk.s16604.project2.utils.filterPhotos
-import pl.pjatk.s16604.project2.utils.getLocation
-import java.io.File
 
 
 class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

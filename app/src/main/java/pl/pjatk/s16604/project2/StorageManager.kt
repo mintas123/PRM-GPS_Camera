@@ -19,11 +19,9 @@ class StorageManager {
     private var dist = 100
 
     fun loadData(context: Context): ProjectMetadata {
-        Log.d("XX_", "LOADING>>>")
         sharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
         color = sharedPreferences.getString(WATERMARK_COLOR, WHITE)
         dist = sharedPreferences.getInt(PROXIMITY, 100)
-        Log.d("XX_", "LOADED>>> $color")
 
         return ProjectMetadata(
             sharedPreferences,
@@ -33,17 +31,13 @@ class StorageManager {
     }
 
     fun saveData(md: ProjectMetadata) {
-        Log.d("XX_", "SAVING>>>")
-        Log.d("XX_", "MD COLOR: >>> ${md.color}")
-
         val editor = sharedPreferences.edit()
         editor.putInt(PROXIMITY, md.dist)
-        editor.putString(WATERMARK_COLOR, color)
+        editor.putString(WATERMARK_COLOR, md.color)
         editor.apply()
         editor.commit()
         color = md.color
         dist = md.dist
-        Log.d("XX_", "SAVED>>> $color")
 
     }
 

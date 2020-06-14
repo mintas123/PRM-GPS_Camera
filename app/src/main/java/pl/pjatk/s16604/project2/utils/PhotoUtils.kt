@@ -25,7 +25,6 @@ fun getBitmapFromString(
     paint.isAntiAlias = true
     val parseColor = Color.parseColor("#$color")
     paint.color = parseColor
-    Log.d("XX_COLOR", "Color: $color")
     paint.textSize = fontSizePX.toFloat()
     val textWidth = (paint.measureText(text) + pad * 2).toInt()
     val height = (fontSizePX / 0.75).toInt()
@@ -85,6 +84,12 @@ private fun calculateInSampleSize(
         }
     }
     return inSampleSize
+}
+
+fun rotateBitmap(bitmap: Bitmap,angle: Float): Bitmap? {
+    val matrix = object : Matrix(){}
+    matrix.postRotate(angle)
+    return Bitmap.createBitmap(bitmap,0,0,bitmap.width,bitmap.height,matrix,true)
 }
 
 

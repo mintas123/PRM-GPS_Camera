@@ -69,7 +69,7 @@
         android:layout_width="129dp"
         android:layout_height="34dp"
         android:layout_marginStart="64dp"
-        android:text="Watermark color:"
+        android:text="New color:"
         android:textColor="@color/colorBrightText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,6 +78,7 @@
 
     <TextView
         android:id="@+id/color_label_current"
+        android:text="Color"
         android:layout_width="129dp"
         android:layout_height="34dp"
         android:textColor="@color/colorBrightText"

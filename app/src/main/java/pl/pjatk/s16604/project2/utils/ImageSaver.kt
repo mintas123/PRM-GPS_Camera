@@ -3,6 +3,7 @@ package pl.pjatk.s16604.project2.utils
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.GradientDrawable
 import android.media.Image
 import android.provider.MediaStore
 import android.util.Log
@@ -18,6 +19,7 @@ internal class ImageSaver(
     private val image: Image,
     private val file: File,
     private val watermark: Bitmap,
+    private val orientation: Int,
     private val mContext: Context
 ) : Runnable {
 
@@ -42,6 +44,8 @@ internal class ImageSaver(
             options.inMutable = true
             val original =
                 BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.size, options)
+            Log.d(TAG,"Orientation: $orientation")
+            rotateBitmap(original,orientation.toFloat())
             val overlayed = overlay(original, watermark)
             val watermarkedByteArrayOS = ByteArrayOutputStream()
             overlayed!!.compress(Bitmap.CompressFormat.JPEG, 100, watermarkedByteArrayOS)
